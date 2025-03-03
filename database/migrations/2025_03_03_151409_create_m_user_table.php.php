@@ -13,15 +13,19 @@ return new class extends Migration
     {
         Schema::create('m_user', function (Blueprint $table) {
             $table->bigIncrements('user_id');
-            $table->unsignedBigInteger('level_id'); // Tambahkan level_id
-            $table->string('username', 50)->unique();
-            $table->string('nama', 100);
+            $table->unsignedBigInteger('level_id');
+            $table->string('username');
             $table->string('password');
             $table->timestamps();
-    
-            // Foreign key ke m_level
-            $table->foreign('level_id')->references('level_id')->on('m_level')->onDelete('cascade');
+        
+            // Pastikan Foreign Key Terhubung dengan Benar
+            $table->foreign('level_id')
+                  ->references('level_id')
+                  ->on('m_level') // Pastikan tabel `m_level` ada
+                  ->onDelete('cascade');
         });
+        
+        
         
     }
 

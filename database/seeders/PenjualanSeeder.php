@@ -9,21 +9,33 @@ use Carbon\Carbon;
 class PenjualanSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Jalankan database seed.
      */
     public function run(): void
     {
-        // Pastikan tabel tidak di-truncate langsung karena ada foreign key
+        // Nonaktifkan sementara foreign key untuk menghindari error
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('t_penjualan')->truncate();
+
+        // Hapus semua data lama tanpa merusak foreign key
+        DB::table('t_penjualan')->delete();
+
+        // Aktifkan kembali foreign key
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Pastikan hanya memilih user_id yang valid dari tabel m_user
+        $userIds = DB::table('m_user')->pluck('user_id')->toArray();
+
+        // Jika tidak ada user_id, hentikan proses
+        if (empty($userIds)) {
+            return;
+        }
 
         $data = [];
 
         for ($i = 1; $i <= 10; $i++) {
             $data[] = [
                 'penjualan_id' => $i,
-                'user_id' => rand(1, 3), // Sesuai dengan user yang tersedia
+                'user_id' => $userIds[array_rand($userIds)], // Pilih user_id yang valid
                 'pembeli' => 'Pembeli ' . $i,
                 'penjualan_kode' => 'TRX' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'penjualan_tanggal' => Carbon::now()->subDays(rand(1, 30)),
