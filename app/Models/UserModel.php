@@ -11,5 +11,11 @@ class UserModel extends Model
 
     protected $table = 'm_user'; // Nama tabel yang digunakan
     protected $primaryKey = 'user_id'; // Primary key tabel
-    public $timestamps = false; // Jika tabel tidak memiliki created_at & updated_at
+    
+
+    protected $fillable = [
+        'nama',
+        'username',
+        'level_id'
+    ];
 }
