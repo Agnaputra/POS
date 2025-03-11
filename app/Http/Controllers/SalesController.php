@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UserModel;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class SalesController extends Controller
 {
-    public function index()
-    {
-        // Ambil semua data dari tabel m_user
-        $user = UserModel::all();
-
-        // Kirim data ke tampilan user.blade.php
-        return view('user', ['data' => $user]);
+    public function index() {
+        return view('sales.index');
     }
+    
 }
