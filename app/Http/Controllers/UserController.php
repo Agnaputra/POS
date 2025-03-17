@@ -9,22 +9,30 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
-    // Menampilkan halaman daftar user
-    public function index()
-    {
-        $breadcrumb = (object) [
-            'title' => 'Daftar User',
-            'list' => ['Home', 'User']
-        ];
+    // Menampilkan halaman awal user
+public function index()
+{
+    $breadcrumb = (object) [
+        "title" => "Daftar User",
+        "list" => ["Home", "User"]
+    ];
 
-        $page = (object) [
-            'title' => 'Daftar user yang terdaftar dalam sistem'
-        ];
+    $page = (object) [
+        "title" => "Daftar user yang terdaftar dalam sistem"
+    ];
 
-        $activeMenu = 'user'; // Set menu yang sedang aktif
+    $activeMenu = "user"; // set menu yang sedang aktif
 
-        return view('user.index', compact('breadcrumb', 'page', 'activeMenu'));
-    }
+    $level = LevelModel::all(); // ambil data level untuk filter level
+
+    return view('user.index', [
+        'breadcrumb' => $breadcrumb,
+        'page' => $page,
+        'level' => $level,
+        'activeMenu' => $activeMenu
+    ]);
+}
+
     // Menampilkan halaman form tambah user
     public function create()
     {
@@ -173,6 +181,11 @@ class UserController extends Controller
     {
         $users = UserModel::select('user_id', 'username', 'name', 'level_id')
             ->with('level');
+        
+        // Filter data user berdasarkan level id
+        if ($request->level_id) {
+            $users->where('level_id', $request->level_id);
+        }
 
         return DataTables::of($users)
             ->addIndexColumn() // Menambahkan kolom index otomatis

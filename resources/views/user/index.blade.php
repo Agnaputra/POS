@@ -15,7 +15,23 @@
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
-    
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label">Filter :</label>
+                    <div class="col-3">
+                        <select class="form-control" id="level_id" name="level_id">
+                            <option value="">- Semua -</option>
+                            @foreach($level as $item)
+                                <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
+                            @endforeach
+                        </select>
+                        <small class="form-text text-muted">Level Pengguna</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <table class="table table-bordered table-striped table-hover table-sm" id="table_user">
             <thead>
                 <tr>
@@ -28,7 +44,6 @@
             </thead>
         </table>
     </div>
-    
 </div>
 @endsection
 
@@ -42,42 +57,25 @@ $(document).ready(function() {
             url: "{{ url('user/list') }}",
             type: "POST",
             dataType: "json",
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            headers: { 
+                'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+            },
+            data: function(d) {
+                d.level_id = $('#level_id').val(); // Kirim filter ke server
             }
         },
         columns: [
-            {
-                data: "DT_RowIndex",
-                className: "text-center",
-                orderable: false,
-                searchable: false
-            },
-            {
-                data: "username",
-                className: "",
-                orderable: true,
-                searchable: true
-            },
-            {
-                data: "name",
-                className: "",
-                orderable: true,
-                searchable: true
-            },
-            {
-                data: "level.level_nama",
-                className: "",
-                orderable: false,
-                searchable: false
-            },
-            {
-                data: "action",
-                className: "",
-                orderable: false,
-                searchable: false
-            }
+            { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
+            { data: "username", orderable: true, searchable: true },
+            { data: "name", orderable: true, searchable: true },
+            { data: "level.level_nama", orderable: false, searchable: false }, // Pastikan sesuai dengan format data dari server
+            { data: "action", orderable: false, searchable: false }
         ]
+    });
+
+    // Event listener untuk filter level pengguna
+    $('#level_id').on('change', function() {
+        dataUser.ajax.reload(); // Reload tabel saat filter diubah
     });
 });
 </script>
