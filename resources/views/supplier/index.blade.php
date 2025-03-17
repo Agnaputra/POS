@@ -1,82 +1,85 @@
 @extends('layouts.template')
 
 @section('content')
-<div class="card card-outline card-primary">
-    <div class="card-header">
-        <h3 class="card-title">Edit Supplier</h3>
-    </div>
-    <div class="card-body">
-        @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
+    <div class="card card-outline card-primary">
+        <div class="card-header">
+            <h3 class="card-title">{{ $page->title }}</h3>
+            <div class="card-tools">
+                <a class="btn btn-sm btn-primary mt-1" href="{{ url('supplier/create') }}">Add Supplier</a>
             </div>
-        @endif
+        </div>
+        <div class="card-body">
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
 
-        @if($supplier)
-            <form method="POST" action="{{ url('/supplier/' . $supplier->supplier_id) }}" class="form-horizontal">
-                @csrf
-                @method('PUT')
-
-                <!-- Nama Supplier -->
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Nama Supplier</label>
-                    <div class="col-9">
-                        <input type="text" class="form-control" name="nama_supplier" value="{{ $supplier->nama_supplier }}" required>
-                        @error('nama_supplier')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Filter:</label>
+                        <div class="col-3">
+                            <input type="text" class="form-control" id="supplier_name" placeholder="Cari Nama Supplier">
+                            <small class="form-text text-muted">Nama Supplier</small>
+                        </div>
                     </div>
                 </div>
+            </div>  
 
-                <!-- Email -->
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Email</label>
-                    <div class="col-9">
-                        <input type="email" class="form-control" name="email" value="{{ $supplier->email }}" required>
-                        @error('email')
-                            <small class="text-danger">{{$message}}</small>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Telepon -->
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Telepon</label>
-                    <div class="col-9">
-                        <input type="text" class="form-control" name="telepon" value="{{ $supplier->telepon }}" required>
-                        @error('telepon')
-                            <small class="text-danger">{{$message}}</small>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Alamat -->
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Alamat</label>
-                    <div class="col-9">
-                        <textarea class="form-control" name="alamat" rows="3" required>{{ $supplier->alamat }}</textarea>
-                        @error('alamat')
-                            <small class="text-danger">{{$message}}</small>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Tombol Submit -->
-                <div class="form-group row">
-                    <label class="col-3 col-form-label"></label>
-                    <div class="col-9">
-                        <button type="submit" class="btn btn-primary">Update Supplier</button>
-                        <a href="{{ url('/supplier') }}" class="btn btn-secondary">Kembali</a>
-                    </div>
-                </div>
-            </form>
-        @else
-            <div class="alert alert-danger">
-                <h5><i class="icon fas fa-ban"></i> Error!</h5>
-                Data supplier tidak ditemukan.
-            </div>
-            <a href="{{ url('/supplier') }}" class="btn btn-default mt-2">Kembali</a>
-        @endif
+            <table class="table table-bordered table-striped table-hover table-sm" id="table_supplier">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama Supplier</th>
+                        <th>Email</th>
+                        <th>Telepon</th>
+                        <th>Alamat</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
-</div>
 @endsection
+
+@push('css')
+@endpush
+
+@push('js')
+<script>
+$(document).ready(function() {
+    var dataSupplier = $('#table_supplier').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ url('supplier/list') }}",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            data: function(d) {
+                d.supplier_name = $('#supplier_name').val();
+            },
+            error: function(xhr, error, thrown) {
+                console.log(xhr.responseText);
+                alert("Error loading data. Check console for details.");
+            }
+        },
+        columns: [
+            { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
+            { data: "nama_supplier", orderable: true, searchable: true },
+            { data: "email", orderable: true, searchable: true },
+            { data: "telepon", orderable: true, searchable: true },
+            { data: "alamat", orderable: true, searchable: true },
+            { data: "action", orderable: false, searchable: false }
+        ]
+    });
+
+    $('#supplier_name').on('keyup', function(){
+        dataSupplier.ajax.reload();
+    });
+});
+</script>
+@endpush
