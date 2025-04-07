@@ -3,17 +3,28 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizeUser
 {
-    public function handle($request, Closure $next, $role)
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  mixed  ...$roles
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (Auth::check() && Auth::user()->level->level_kode === $role) {
-            return $next($request);
+        $user_role = $request->user()->getRole(); // Ambil level_kode dari user
+
+        if (in_array($user_role, $roles)) {
+            return $next($request); // Jika role cocok, lanjutkan request
         }
 
-        abort(403, 'Unauthorized');
+        // Jika tidak cocok, tampilkan error 403
+        abort(403, 'Forbidden. Kamu tidak punya akses ke halaman ini.');
     }
 }
-
