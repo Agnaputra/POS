@@ -1,14 +1,31 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\LevelController;
-use App\Http\Controllers\BarangController;
-use App\Http\Controllers\WelcomeController;
-use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\LevelController;
+use App\Http\Controllers\WelcomeController;
+use Illuminate\Support\Facades\Route;
+
+// Define a route pattern that ensures 'id' must be numeric
+Route::pattern('id', '[0-9]+'); 
+
+// Authentication Routes
+
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'postLogin']);
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
+
+// Group routes that require authentication
+Route::middleware(['auth'])->group(function () {
+    // Masukkan semua route yang perlu autentikasi di sini
+});
+
 
 Route::get('/', [WelcomeController::class,'index']);
+
 
 Route::group(['prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'index' ]);
@@ -82,3 +99,4 @@ Route::group(['prefix' => 'barang'], function () {
     Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax' ]);
     Route::delete('/{id}', [BarangController::class, 'destroy']);
 });
+
