@@ -1,26 +1,30 @@
 <?php
 
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\BarangController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\KategoriController;
-use App\Http\Controllers\LevelController;
-use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\LevelController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\AuthController;
 
-// Define a route pattern that ensures 'id' must be numeric
 Route::pattern('id', '[0-9]+'); 
 
-// Authentication Routes
-
+// Authentication
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postLogin']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-// Group routes that require authentication
+// Group that needs auth
 Route::middleware(['auth'])->group(function () {
-    // Masukkan semua route yang perlu autentikasi di sini
+    Route::get('/', [WelcomeController::class, 'index']);
+    Route::resource('user', UserController::class);
+    Route::resource('level', LevelController::class);
+    Route::resource('kategori', KategoriController::class);
+    Route::resource('supplier', SupplierController::class);
+    Route::resource('barang', BarangController::class);
 });
 
 

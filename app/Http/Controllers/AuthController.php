@@ -9,11 +9,9 @@ class AuthController extends Controller
 {
     public function login()
     {
-        if (Auth::check()) { 
-            // If user is already logged in, redirect to home page
+        if (Auth::check()) {
             return redirect('/');
         }
-
         return view('auth.login');
     }
 
