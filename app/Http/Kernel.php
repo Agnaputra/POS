@@ -53,6 +53,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         // ✅ Custom middleware
-        'authorize' => \App\Http\Middleware\AuthorizeMiddleware::class,
+        'authorize' => \App\Http\Middleware\AuthorizeUser::class,
     ];
 }
