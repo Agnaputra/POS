@@ -27,15 +27,24 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('barang', BarangController::class);
 });
 
-
-Route::get('/', [WelcomeController::class,'index']);
-
+// Level route with role-based authorization (only for ADM role)
+Route::middleware(['auth'])->group(function () {
+    Route::middleware(['authorize:ADM'])->group(function () {
+        Route::get('/level', [LevelController::class, 'index']);
+        Route::post('/level/list', [LevelController::class, 'list']);
+        Route::get('/level/create', [LevelController::class, 'create']);
+        Route::post('/level', [LevelController::class, 'store']);
+        Route::get('/level/{id}/edit', [LevelController::class, 'edit']);
+        Route::put('/level/{id}', [LevelController::class, 'update']);
+        Route::delete('/level/{id}', [LevelController::class, 'destroy']);
+    });
+});
 
 Route::group(['prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'index' ]);
     Route::post('/list', [UserController::class, 'list' ]);
     Route::get('/create_ajax', [UserController::class, 'create_ajax' ]);
-    Route::post('/ajax', [Usercontroller::class, 'store_ajax' ]);
+    Route::post('/ajax', [UserController::class, 'store_ajax' ]);
     Route::get('/{id}', [UserController::class, 'show' ]);
     Route::get('/{id}/edit_ajax', [UserController::class, 'edit_ajax' ]);
     Route::put('/{id}/update_ajax', [UserController::class, 'update_ajax' ]);
@@ -43,7 +52,6 @@ Route::group(['prefix' => 'user'], function () {
     Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax' ]);
     Route::delete('/{id}', [UserController::class, 'destroy' ]);
 });
-
 
 Route::group(['prefix' => 'level'], function () {
     Route::get('/', [LevelController::class, 'index']);
@@ -103,4 +111,3 @@ Route::group(['prefix' => 'barang'], function () {
     Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax' ]);
     Route::delete('/{id}', [BarangController::class, 'destroy']);
 });
-

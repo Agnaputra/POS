@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class LevelController extends Controller
 {
-    // Menampilkan halaman awal level
     public function index()
     {
         $breadcrumb = (object) [
@@ -21,10 +20,10 @@ class LevelController extends Controller
             'title' => 'Daftar Level'
         ];
 
-        $activeMenu = 'level'; // set menu yang sedang aktif
+        $activeMenu = 'level';
         $levels = LevelModel::all();
 
-        return view('level.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'levels' => $levels, 'activeMenu' => $activeMenu]);
+        return view('level.index', compact('breadcrumb', 'page', 'levels', 'activeMenu'));
     }
 
     public function create()
@@ -38,14 +37,18 @@ class LevelController extends Controller
             'title' => 'Tambah Level Baru'
         ];
 
-        $activeMenu = 'level'; // set menu yang sedang aktif
+        $activeMenu = 'level';
 
-        return view('level.create', compact('breadcrumb', 'page', 'activeMenu',));
+        return view('level.create', compact('breadcrumb', 'page', 'activeMenu'));
     }
 
-    public function show(String $id)
+    public function show(string $id)
     {
         $level = LevelModel::find($id);
+
+        if (!$level) {
+            return redirect('/level')->with('error', 'Data level tidak ditemukan');
+        }
 
         $breadcrumb = (object) [
             'title' => 'Detail Level',
@@ -58,10 +61,8 @@ class LevelController extends Controller
 
         $activeMenu = 'level';
 
-        return view('level.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
+        return view('level.show', compact('breadcrumb', 'page', 'level', 'activeMenu'));
     }
-
-
 
     public function store(Request $request)
     {
@@ -81,7 +82,7 @@ class LevelController extends Controller
     public function destroy(string $id)
     {
         $check = LevelModel::find($id);
-        
+
         if (!$check) {
             return redirect('/level')->with('error', 'Data level tidak ditemukan');
         }
@@ -100,25 +101,22 @@ class LevelController extends Controller
         if (!$level) {
             return redirect('/level')->with('error', 'Data level tidak ditemukan.');
         }
-    
-        // Mengambil semua level untuk ditampilkan sebagai opsi
+
         $levelOptions = LevelModel::all();
-    
+
         $breadcrumb = (object) [
             'title' => 'Edit Level',
             'list' => ['Home', 'Level', 'Edit']
         ];
-    
+
         $page = (object) [
             'title' => 'Edit Level'
         ];
-    
+
         $activeMenu = 'level';
-    
+
         return view('level.edit', compact('breadcrumb', 'page', 'level', 'activeMenu', 'levelOptions'));
     }
-    
-    
 
     public function update(Request $request, string $id)
     {
@@ -151,7 +149,6 @@ class LevelController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
-
 
     public function create_ajax()
     {
@@ -226,11 +223,10 @@ class LevelController extends Controller
         return redirect('/');
     }
 
-
     public function confirm_ajax(string $id)
     {
         $level = LevelModel::find($id);
-        return view('level.confirm_ajax', ['level' => $level]);
+        return view('level.confirm_ajax', compact('level'));
     }
 
     public function delete_ajax(Request $request, $id)
