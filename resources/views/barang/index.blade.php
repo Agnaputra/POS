@@ -1,16 +1,17 @@
 @extends('layouts.template')
+
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">List of items</h3>
+        <h3 class="card-title">List of Items</h3>
         <div class="card-tools">
-            <button onclick="modalAction('{{ url('/goods/import') }}')" class="btn btn-info">Import Goods</button>
-            <a href="{{ url('/item/create') }}" class="btn btn-primary">Add Data</a>
-            <button onclick="modalAction('{{ url('/item/create_ajax') }}')" class="btn btn-success">Add Data (Ajax)</button>
+            <button onclick="modalAction('{{ url('/barang/import') }}')" class="btn btn-info">Import Goods</button>
+            <a href="{{ url('/barang/create') }}" class="btn btn-primary">Add Data</a>
+            <button onclick="modalAction('{{ url('/barang/create_ajax') }}')" class="btn btn-success">Add Data (Ajax)</button>
         </div>
     </div>
     <div class="card-body">
-        <!-- for Data filter -->
+        <!-- Filter section -->
         <div id="filter" class="form-horizontal filter-date p-2 border-bottom mb-2">
             <div class="row">
                 <div class="col-md-12">
@@ -30,6 +31,7 @@
             </div>
         </div>
 
+        <!-- Success and error messages -->
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -37,6 +39,7 @@
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
+        <!-- Item Table -->
         <table class="table table-bordered table-sm table-striped table-hover" id="table-item">
             <thead>
                 <tr>
@@ -54,8 +57,8 @@
     </div>
 </div>
 
-<div id="myModal" class="modal fade animate shake" tabindex="-1" data-backdrop="static"
-     data-keyboard="false" data-width="75%"></div>
+<!-- Modal -->
+<div id="myModal" class="modal fade animate shake" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="75%"></div>
 @endsection
 
 @push('js')
@@ -72,7 +75,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ url('item/list') }}",
+                url: "{{ url('barang/list') }}",  // Adjusted URL for item list
                 dataType: "json",
                 type: "POST",
                 data: function (d) {
@@ -122,7 +125,7 @@
                     }
                 },
                 {
-                    data: "kategori.nama_kategori",  // Make sure you access it as "kategori.nama_kategori"
+                    data: "kategori.nama_kategori",  // Access category name properly
                     className: "",
                     width: "14%",
                     orderable: true,
@@ -145,7 +148,7 @@
             }
         });
 
-        // Redraw table on category change
+        // Redraw table on category filter change
         $('.filter_kategori').change(function () {
             tableItem.draw();
         });
