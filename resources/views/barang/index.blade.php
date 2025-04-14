@@ -19,8 +19,8 @@
                         <div class="col-md-3">
                             <select name="filter_kategori" class="form-control form-control-sm filter_kategori">
                                 <option value="">- All -</option>
-                                @foreach($kategori as $l)
-                                    <option value="{{ $l->kategori_id }}">{{ $l->kategori_nama }}</option>
+                                @foreach($category as $l)
+                                    <option value="{{ $l->kategori_id }}">{{ $l->nama_kategori }}</option>
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">Item Category</small>
@@ -122,7 +122,7 @@
                     }
                 },
                 {
-                    data: "kategori.kategori_nama",
+                    data: "kategori.nama_kategori",  // Make sure you access it as "kategori.nama_kategori"
                     className: "",
                     width: "14%",
                     orderable: true,
