@@ -17,8 +17,10 @@ class BarangModel extends Model
 
     protected $fillable = ['barang_id', 'kategori_id', 'barang_kode','barang_kode','barang_nama','harga_beli','harga_jual']; // Pastikan kolom bisa diisi
 
-    public function users(): HasMany
-    {
-        return $this->hasMany(UserModel::class, 'barang_id', 'barang_id');
-    }
+    // Di dalam app/Models/BarangModel.php
+public function kategori()
+{
+    return $this->belongsTo(KategoriModel::class, 'kategori_id');
+}
+
 }
