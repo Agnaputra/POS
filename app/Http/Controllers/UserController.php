@@ -89,6 +89,14 @@ class UserController extends Controller
                 
                 $btn .= '<button onclick="modalAction(\''.url('/user/' . $user->user_id . '/delete_ajax').'\')" 
                          class="btn btn-danger btn-sm">Delete</button> ';
+
+                $btn = '<a href="/user/url" class="btn btn-info btn-sm">Detail</a> ';
+                 
+                 $btn .= '<button onclick="modalAction(\''.url('/user/' . $user->user_id . '/edit_ajax').'\')" 
+                          class="btn btn-warning btn-sm">Edit</button> ';
+                 
+                 $btn .= '<button onclick="modalAction(\''.url('/user/' . $user->user_id . '/delete_ajax').'\')" 
+                          class="btn btn-danger btn-sm">Delete</button> ';
                 
                 return $btn;  
             })  
