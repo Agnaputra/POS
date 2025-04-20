@@ -5,8 +5,8 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">add</a>
-                <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
+                <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Add Level</a>
+                <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Add Ajax</button>
             </div>
         </div>
 
@@ -57,42 +57,42 @@
 
 @push('js')
 <script>
-function modalAction(url= ''){
-    $('#myModal').load(url,function(){
-        $('#myModal').modal('show');
-    });
-}
-
-var dataUser;
-$(document).ready(function() {
-    var dataUser = $('#table_level').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: "{{ url('level/list') }}",
-            type: "POST",
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+    function modalAction(url= ''){
+        $('#myModal').load(url,function(){
+            $('#myModal').modal('show');
+        });
+    }
+    
+    var dataUser;
+    $(document).ready(function() {
+        var dataUser = $('#table_level').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('level/list') }}",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                },
+                data: function(d) {
+                    d.level_kode = $('#level_kode').val();
+                },
+                error: function(xhr, error, thrown) {
+                    console.log(xhr.responseText);
+                    alert("Error loading data. Check console for details.");
+                }
             },
-            data: function(d) {
-                d.level_kode = $('#level_kode').val();
-            },
-            error: function(xhr, error, thrown) {
-                console.log(xhr.responseText);
-                alert("Error loading data. Check console for details.");
-            }
-        },
-        columns: [
-            { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
-            { data: "level_kode", orderable: true, searchable: true },
-            { data: "level_nama", orderable: true, searchable: true },
-            { data: "action", orderable: false, searchable: false }
-        ]
+            columns: [
+                { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
+                { data: "level_kode", orderable: true, searchable: true },
+                { data: "level_nama", orderable: true, searchable: true },
+                { data: "action", orderable: false, searchable: false }
+            ]
+        });
+    
+        $('#level_kode').on('change', function(){
+            dataLevel.ajax.reload();
+        });
     });
-
-    $('#level_kode').on('change', function(){
-        dataLevel.ajax.reload();
-    });
-});
-</script>
+    </script>
 @endpush

@@ -9,34 +9,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                
-                <!-- Level Code (Dropdown) -->
                 <div class="form-group">
-                    <label for="level_kode">Level Code</label>
-                    <select class="form-control" id="level_kode" name="level_kode" required>
-                        <option value="">- Pilih Level Code -</option>
-                        <option value="L1">Level 1</option>
-                        <option value="L2">Level 2</option>
-                        <option value="L3">Level 3</option>
-                        <option value="L4">Level 4</option>
-                    </select>
-                    <small id="error-level_kode" class="error-text form-text text-danger"></small>
+                    <label>Level Name</label>
+                    <input type="text" name="level_name" id="level_name" class="form-control" required>
+                    <small id="error-level_name" class="error-text form-text text-danger"></small>
                 </div>
-
-                <!-- Level Name -->
                 <div class="form-group">
-                    <label for="level_nama">Level Name</label>
-                    <input type="text" name="level_nama" id="level_nama" class="form-control" required>
-                    <small id="error-level_nama" class="error-text form-text text-danger"></small>
-                </div>
-
-                <!-- Level Description -->
-                <div class="form-group">
-                    <label for="level_description">Description</label>
+                    <label>Description</label>
                     <textarea name="level_description" id="level_description" class="form-control" required></textarea>
                     <small id="error-level_description" class="error-text form-text text-danger"></small>
                 </div>
-
             </div>
             <div class="modal-footer">
                 <button type="button" data-dismiss="modal" class="btn btn-warning">Cancel</button>
@@ -50,8 +32,7 @@
 $(document).ready(function() {
     $("#form-add").validate({
         rules: {
-            level_kode: { required: true },
-            level_nama: { required: true, minlength: 3, maxlength: 50 },
+            level_name: { required: true, minlength: 3, maxlength: 50 },
             level_description: { required: true, minlength: 5, maxlength: 255 }
         },
         submitHandler: function(form) {
@@ -61,10 +42,10 @@ $(document).ready(function() {
                 data: $(form).serialize(),
                 success: function(response) {
                     if (response.status) {
-                        $('#modal-master').modal('hide');
+                        $('#myModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
-                            title: 'Success',
+                            title: 'Succeed',
                             text: response.message
                         });
                         dataLevel.ajax.reload();

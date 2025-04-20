@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class LevelController extends Controller
 {
+    // Menampilkan halaman awal level
     public function index()
     {
         $breadcrumb = (object) [
@@ -20,10 +21,10 @@ class LevelController extends Controller
             'title' => 'Daftar Level'
         ];
 
-        $activeMenu = 'level';
+        $activeMenu = 'level'; // set menu yang sedang aktif
         $levels = LevelModel::all();
 
-        return view('level.index', compact('breadcrumb', 'page', 'levels', 'activeMenu'));
+        return view('level.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'levels' => $levels, 'activeMenu' => $activeMenu]);
     }
 
     public function create()
@@ -37,18 +38,14 @@ class LevelController extends Controller
             'title' => 'Tambah Level Baru'
         ];
 
-        $activeMenu = 'level';
+        $activeMenu = 'level'; // set menu yang sedang aktif
 
-        return view('level.create', compact('breadcrumb', 'page', 'activeMenu'));
+        return view('level.create', compact('breadcrumb', 'page', 'activeMenu',));
     }
 
-    public function show(string $id)
+    public function show(String $id)
     {
         $level = LevelModel::find($id);
-
-        if (!$level) {
-            return redirect('/level')->with('error', 'Data level tidak ditemukan');
-        }
 
         $breadcrumb = (object) [
             'title' => 'Detail Level',
@@ -61,7 +58,23 @@ class LevelController extends Controller
 
         $activeMenu = 'level';
 
-        return view('level.show', compact('breadcrumb', 'page', 'level', 'activeMenu'));
+        return view('level.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
+    }
+
+    public function list(Request $request)
+    {
+        $levels = LevelModel::select('level_id', 'level_kode', 'level_nama');
+
+        return DataTables::of($levels)
+            ->addIndexColumn()
+            ->addColumn('action', function ($level) {
+                $btn = '<button onclick="modalAction(\''.url('/level/' . $level->level_id . '/show_ajax').'\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn .= '<button onclick="modalAction(\''.url('/level/' . $level->level_id . '/edit_ajax').'\')" class="btn btn-warning btn-sm">Edit</button> ';
+                $btn .= '<button onclick="modalAction(\''.url('/level/' . $level->level_id . '/delete_ajax').'\')" class="btn btn-danger btn-sm">Delete</button> ';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function store(Request $request)
@@ -82,7 +95,7 @@ class LevelController extends Controller
     public function destroy(string $id)
     {
         $check = LevelModel::find($id);
-
+        
         if (!$check) {
             return redirect('/level')->with('error', 'Data level tidak ditemukan');
         }
@@ -101,22 +114,25 @@ class LevelController extends Controller
         if (!$level) {
             return redirect('/level')->with('error', 'Data level tidak ditemukan.');
         }
-
+    
+        // Mengambil semua level untuk ditampilkan sebagai opsi
         $levelOptions = LevelModel::all();
-
+    
         $breadcrumb = (object) [
             'title' => 'Edit Level',
             'list' => ['Home', 'Level', 'Edit']
         ];
-
+    
         $page = (object) [
             'title' => 'Edit Level'
         ];
-
+    
         $activeMenu = 'level';
-
+    
         return view('level.edit', compact('breadcrumb', 'page', 'level', 'activeMenu', 'levelOptions'));
     }
+    
+    
 
     public function update(Request $request, string $id)
     {
@@ -133,23 +149,6 @@ class LevelController extends Controller
 
         return redirect('/level')->with('success', 'Data level berhasil diubah');
     }
-
-    public function list(Request $request)
-    {
-        $levels = LevelModel::select('level_id', 'level_kode', 'level_nama');
-
-        return DataTables::of($levels)
-            ->addIndexColumn()
-            ->addColumn('action', function ($level) {
-                $btn = '<button onclick="modalAction(\''.url('/level/' . $level->level_id . '/show_ajax').'\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\''.url('/level/' . $level->level_id . '/edit_ajax').'\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\''.url('/level/' . $level->level_id . '/delete_ajax').'\')" class="btn btn-danger btn-sm">Delete</button> ';
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
-    }
-
     public function create_ajax()
     {
         $levels = LevelModel::all(); 
@@ -223,10 +222,11 @@ class LevelController extends Controller
         return redirect('/');
     }
 
+
     public function confirm_ajax(string $id)
     {
         $level = LevelModel::find($id);
-        return view('level.confirm_ajax', compact('level'));
+        return view('level.confirm_ajax', ['level' => $level]);
     }
 
     public function delete_ajax(Request $request, $id)
